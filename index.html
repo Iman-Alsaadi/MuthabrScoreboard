@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>لوحة نقاط المذاكرة الذكية</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+      background: url('background1.png') no-repeat center center fixed;
+  background-size: cover;
+      padding: 20px;
+      color: white;
+    }
+
+    h1 {
+      font-size: 36px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .teams {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .team {
+      background: #835DFF;
+      border-radius: 15px;
+      padding: 20px;
+      width: 220px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .team-header {
+      background: #6F49D9;
+      border-radius: 12px;
+      width: 100%;
+      padding: 10px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+
+    .team-header input {
+      font-size: 20px;
+      font-weight: bold;
+      background: transparent;
+      border: none;
+      color: #fff;
+      text-align: center;
+      width: 100px;
+    }
+
+    .rank-name {
+      font-size: 20px;
+      font-weight: bold;
+      user-select: none;
+    }
+
+    .score {
+      font-size: 40px;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    .stars {
+      font-size: 24px;
+      color: #FFAE00;
+      margin: 8px 0;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    button {
+      font-size: 18px;
+      padding: 6px 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      background-color: #E0D7FF;
+      color: #532EC9;
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #C5B8FF;
+    }
+
+    #timer {
+      font-size: 50px;
+      margin: 30px auto;
+      color: #532EC9;
+      background: #E0D7FF;
+      width: 160px;
+      padding: 15px;
+      border-radius: 10px;
+      font-weight: bold;
+    }
+
+    #controls {
+      margin-top: 30px;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    #questionNumber {
+      display: none;
+      font-size: 26px;
+      color: #532EC9;
+      background: #fffbe6;
+      border: 3px solid #FFAE00;
+      border-radius: 12px;
+      padding: 12px;
+      width: fit-content;
+      margin: 0 auto 15px auto;
+      font-weight: bold;
+    }
+
+    .rank-img {
+      width: 60px;
+      height: 60px;
+      object-fit: contain;
+      margin-bottom: 8px;
+    }
+
+    .winner {
+      border: 4px solid gold;
+      box-shadow: 0 0 20px gold;
+      transform: scale(1.05);
+    }
+
+  </style>
+</head>
+<body>
+  <h1>لوحة نقاط مسابقة "المذاكرة الذكية"</h1>
+
+  <div id="questionNumber"></div>
+  <div id="timer">300</div>
+
+  <div id="controls">
+    <button onclick="restartPhases()">أعد المراحل</button>
+    <button onclick="nextPhase()">المرحلة التالية</button>
+    <button onclick="startPhase()">ابدأ الوقت</button>
+    <button onclick="nextQuestion()" id="nextBtn" style="display:none;">السؤال التالي</button>
+  </div>
+
+  <div class="teams">
+    <!-- فرق 1 إلى 4 -->
+    <div class="team" data-team="1">
+      <div class="team-header">
+        <img id="rankImage1" class="rank-img" src="مبتدئ.png" alt="الرتبة">
+        <input id="name1" value="فريق 1">
+        <span class="rank-name" id="rankName1"><span class="rank-text">مبتدئ</span></span>
+      </div>
+      <div class="score" id="score1">0</div>
+      <div class="stars" id="stars1"></div>
+      <div class="buttons">
+        <button onclick="addPoint(1)">+</button>
+        <button onclick="removePoint(1)">-</button>
+      </div>
+    </div>
+
+    <div class="team" data-team="2">
+      <div class="team-header">
+        <img id="rankImage2" class="rank-img" src="مبتدئ.png" alt="الرتبة">
+        <input id="name2" value="فريق 2">
+        <span class="rank-name" id="rankName2"><span class="rank-text">مبتدئ</span></span>
+      </div>
+      <div class="score" id="score2">0</div>
+      <div class="stars" id="stars2"></div>
+      <div class="buttons">
+        <button onclick="addPoint(2)">+</button>
+        <button onclick="removePoint(2)">-</button>
+      </div>
+    </div>
+
+    <div class="team" data-team="3">
+      <div class="team-header">
+        <img id="rankImage3" class="rank-img" src="مبتدئ.png" alt="الرتبة">
+        <input id="name3" value="فريق 3">
+        <span class="rank-name" id="rankName3"><span class="rank-text">مبتدئ</span></span>
+      </div>
+      <div class="score" id="score3">0</div>
+      <div class="stars" id="stars3"></div>
+      <div class="buttons">
+        <button onclick="addPoint(3)">+</button>
+        <button onclick="removePoint(3)">-</button>
+      </div>
+    </div>
+
+    <div class="team" data-team="4">
+      <div class="team-header">
+        <img id="rankImage4" class="rank-img" src="مبتدئ.png" alt="الرتبة">
+        <input id="name4" value="فريق 4">
+        <span class="rank-name" id="rankName4"><span class="rank-text">مبتدئ</span></span>
+      </div>
+      <div class="score" id="score4">0</div>
+      <div class="stars" id="stars4"></div>
+      <div class="buttons">
+        <button onclick="addPoint(4)">+</button>
+        <button onclick="removePoint(4)">-</button>
+      </div>
+    </div>
+  </div>
+
+  <audio id="bell" src="bell.mp3" preload="auto"></audio>
+  <audio id="tick" src="tick.mp3" preload="auto"></audio>
+
+  <script>
+    let phase = 1, question = 0, interval = null;
+    const scores = [0, 0, 0, 0];
+
+    function playBell() {
+      document.getElementById('bell').play();
+    }
+
+    function getRank(score) {
+      if (score >= 30) return ['أسطورة','🌟'];
+      if (score >= 20) return ['مُثابر','🔥'];
+      if (score >= 10) return ['مجتهد','💪'];
+      if (score >= 5)  return ['نجم صاعد','⭐'];
+      return ['مبتدئ','✰'];
+    }
+
+    function updateScore(team) {
+      const idx = team - 1;
+      const [name, icon] = getRank(scores[idx]);
+      document.getElementById('score' + team).textContent = scores[idx];
+      document.getElementById('stars' + team).textContent = '⭐'.repeat(Math.min(scores[idx], 5));
+      document.querySelector('#rankName' + team + ' .rank-text').textContent = name;
+      document.getElementById('rankImage' + team).src = `${name}.png`;
+      document.getElementById('rankImage' + team).alt = name;
+    }
+
+    function addPoint(t) { scores[t-1]++; updateScore(t); }
+    function removePoint(t) { if (scores[t-1]>0) { scores[t-1]--; updateScore(t); } }
+
+    function restartPhases() {
+  clearInterval(interval);
+  phase = 1;
+  question = 0;
+
+  document.getElementById('timer').style.display = 'block';
+  document.getElementById('timer').textContent = 300;
+  document.getElementById('questionNumber').style.display = 'block';
+
+  // ✅ إظهار جميع أزرار التحكم
+  document.querySelectorAll('#controls button').forEach(btn => btn.style.display = 'inline-block');
+  document.getElementById('nextBtn').style.display = 'none';
+
+  showPhaseCard();
+}
+
+
+    function startPhase() {
+      clearInterval(interval);
+      hideButtons();
+      if (phase === 1) {
+        startTimer(300, () => { phase = 2; question = 0; showPhaseCard(); });
+      } else if (phase === 2 || phase === 3) {
+        if (question < 5) {
+          question++;
+          document.getElementById('questionNumber').textContent = phase === 2 ?
+            `📘 المرحلة الثانية: بطاقات استذكار - سؤال ${question}` :
+            `📗 المرحلة الثالثة: أسئلة سريعة - سؤال ${question}`;
+          document.getElementById('nextBtn').style.display = 'inline-block';
+          startTimer(10);
+        }
+      }
+    }
+
+    function nextPhase() {
+  clearInterval(interval);
+  document.getElementById('tick').pause();
+  document.getElementById('tick').currentTime = 0;
+  question = 0;
+  phase = Math.min(phase + 1, 4);
+  hideButtons();
+  showPhaseCard();
+}
+
+    function nextQuestion() {
+      clearInterval(interval);
+      startPhase();
+    }
+
+    function hideButtons() {
+      document.getElementById('nextBtn').style.display = 'none';
+    }
+
+    function showPhaseCard() {
+  const q = document.getElementById('questionNumber');
+  q.style.display = 'block';
+
+  if (phase === 1) {
+    q.textContent = '📝 المرحلة الأولى: قراءة الملخص';
+    timer.textContent = 300;
+    document.getElementById('startPhase').style.display = 'inline-block';
+  } else if (phase === 2) {
+    q.textContent = '📘 المرحلة الثانية: بطاقات استذكار';
+    timer.textContent = 10;
+  } else if (phase === 3) {
+    q.textContent = '📗 المرحلة الثالثة: أسئلة سريعة';
+    timer.textContent = 10;
+  } else {
+    q.textContent = '👏 أحسنتم جميعًا!';
+    highlightWinnersAndSort();
+    document.getElementById('timer').style.display = 'none';
+
+    // ✅ إظهار فقط زر "أعد المراحل"
+    document.getElementById('nextBtn').style.display = 'none';
+    document.querySelectorAll('#controls button').forEach(btn => btn.style.display = 'none');
+    document.querySelector('#controls button:first-child').style.display = 'inline-block'; // زر "أعد المراحل"
+  }
+}
+
+   function startTimer(sec, cb) {
+  clearInterval(interval);
+  const tickSound = document.getElementById('tick');
+  document.getElementById('timer').textContent = sec;
+
+  interval = setInterval(() => {
+    // عرض القيمة الحالية
+    document.getElementById('timer').textContent = sec;
+
+    if (sec <= 0) {
+      clearInterval(interval);
+      tickSound.pause();
+      tickSound.currentTime = 0;
+      playBell();
+      if (cb) cb();
+      return;
+    }
+
+    tickSound.pause();
+    tickSound.currentTime = 0;
+    tickSound.play();
+
+    sec--;
+  }, 1000);
+}
+
+    document.addEventListener('DOMContentLoaded', restartPhases);
+
+    function highlightWinnersAndSort() {
+  const teamsContainer = document.querySelector('.teams');
+  const teamElements = Array.from(teamsContainer.children);
+
+  // جمع النقاط لكل فريق
+  const teamData = teamElements.map(el => {
+    const teamNum = el.getAttribute('data-team');
+    const score = scores[teamNum - 1];
+    return { el, score };
+  });
+
+  // إيجاد أعلى نقاط
+  const maxScore = Math.max(...teamData.map(t => t.score));
+
+  // إزالة تمييز الفوز السابق
+  teamData.forEach(t => t.el.classList.remove('winner'));
+
+  // تمييز الفرق الحاصلة على أعلى نقاط
+  teamData.forEach(t => {
+    if (t.score === maxScore && maxScore > 0) {
+      t.el.classList.add('winner');
+    }
+  });
+
+  // ترتيب الفرق تنازليًا حسب النقاط
+  teamData.sort((a, b) => b.score - a.score);
+
+  // إعادة ترتيب العناصر في الصفحة
+  teamData.forEach(t => teamsContainer.appendChild(t.el));
+}
+
+  </script>
+</body>
+</html>
