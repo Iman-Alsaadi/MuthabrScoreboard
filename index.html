@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <title>لوحة نقاط المذاكرة الذكية</title>
+  <title>/مسابقة الذاكرة الحديدية</title>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -147,10 +147,29 @@
   </style>
 </head>
 <body>
-  <h1>لوحة نقاط مسابقة "المذاكرة الذكية"</h1>
+  <h1>مسابقة "الذاكرة الحديدية"</h1>
+
+  <div id="setup" style="margin: 20px 0;">
+  <label for="teamCount" style="font-size: 20px;">اختر عدد الفرق:</label>
+  <select id="teamCount" style="font-size: 18px; padding: 6px; border: none; border-radius: 6px; cursor: pointer;
+      background-color: #E0D7FF; color: #532EC9; font-weight: bold; transition: background-color 0.3s;">
+    <option value="1">1 فريق</option>
+    <option value="2">2 فريقان</option>
+    <option value="3">3 فرق</option>
+    <option value="4" selected>4 فرق</option>
+    <option value="5">5 فرق</option>
+    <option value="6">6 فرق</option>
+    <option value="7">7 فرق</option>
+    <option value="8">8 فرق</option>
+    <option value="9">9 فرق</option>
+    <option value="10">10 فرق</option>
+  </select>
+  <button onclick="initializeTeams()" style="font-size: 18px; padding: 6px 12px;">ابدأ المسابقة</button>
+  </div>
+
 
   <div id="questionNumber"></div>
-  <div id="timer">300</div>
+  <div id="timer">180</div>
 
   <div id="controls">
     <button onclick="restartPhases()">أعد المراحل</button>
@@ -223,15 +242,15 @@
 
   <script>
     let phase = 1, question = 0, interval = null;
-    const scores = [0, 0, 0, 0];
+    let scores = [];
 
     function playBell() {
       document.getElementById('bell').play();
     }
 
     function getRank(score) {
-      if (score >= 30) return ['أسطورة','🌟'];
-      if (score >= 20) return ['مُثابر','🔥'];
+      if (score >= 25) return ['أسطورة','🌟'];
+      if (score >= 15) return ['مُثابر','🔥'];
       if (score >= 10) return ['مجتهد','💪'];
       if (score >= 5)  return ['نجم صاعد','⭐'];
       return ['مبتدئ','✰'];
@@ -277,7 +296,7 @@
           question++;
           document.getElementById('questionNumber').textContent = phase === 2 ?
             `📘 المرحلة الثانية: بطاقات استذكار - سؤال ${question}` :
-            `📗 المرحلة الثالثة: أسئلة سريعة - سؤال ${question}`;
+            `📗 المرحلة الثالثة: أسئلة اختياري من متعدد - سؤال ${question}`;
           document.getElementById('nextBtn').style.display = 'inline-block';
           startTimer(10);
         }
@@ -315,7 +334,7 @@
     q.textContent = '📘 المرحلة الثانية: بطاقات استذكار';
     timer.textContent = 10;
   } else if (phase === 3) {
-    q.textContent = '📗 المرحلة الثالثة: أسئلة سريعة';
+    q.textContent = '📗 المرحلة الثالثة: أسئلة اختياري من متعدد';
     timer.textContent = 10;
   } else {
     q.textContent = '👏 أحسنتم جميعًا!';
@@ -387,6 +406,43 @@
   // إعادة ترتيب العناصر في الصفحة
   teamData.forEach(t => teamsContainer.appendChild(t.el));
 }
+
+  function initializeTeams() {
+  const count = parseInt(document.getElementById('teamCount').value);
+  const teamsContainer = document.querySelector('.teams');
+  teamsContainer.innerHTML = ''; // حذف أي فرق سابقة
+
+  scores.length = 0; // إعادة تهيئة النقاط
+
+  for (let i = 1; i <= count; i++) {
+    scores.push(0); // نقطة أولية لكل فريق
+
+    const team = document.createElement('div');
+    team.className = 'team';
+    team.setAttribute('data-team', i);
+    team.innerHTML = `
+      <div class="team-header">
+        <img id="rankImage${i}" class="rank-img" src="مبتدئ.png" alt="الرتبة">
+        <input id="name${i}" value="فريق ${i}">
+        <span class="rank-name" id="rankName${i}"><span class="rank-text">مبتدئ</span></span>
+      </div>
+      <div class="score" id="score${i}">0</div>
+      <div class="stars" id="stars${i}"></div>
+      <div class="buttons">
+        <button onclick="addPoint(${i})">+</button>
+        <button onclick="removePoint(${i})">-</button>
+      </div>
+    `;
+    teamsContainer.appendChild(team);
+  }
+
+  document.getElementById('setup').style.display = 'none'; // إخفاء الإعدادات
+  document.getElementById('controls').style.display = 'flex'; // إظهار التحكم
+  document.getElementById('questionNumber').style.display = 'block';
+
+  restartPhases(); // بدء المراحل
+}
+
 
   </script>
 </body>
